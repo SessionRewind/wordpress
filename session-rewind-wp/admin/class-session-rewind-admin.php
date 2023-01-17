@@ -55,71 +55,16 @@ class Session_Rewind_Admin {
 		add_action('admin_init', array( $this, 'registerAndBuildFields' ));
 	}
 
-	/**
-	 * Register the stylesheets for the admin area.
-	 *
-	 * @since    1.0.0
-	 */
-	public function enqueue_styles() {
-
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Session_Rewind_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Session_Rewind_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
-		wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'css/session-rewind-admin.css', array(), $this->version, 'all' );
-
-	}
-
-	/**
-	 * Register the JavaScript for the admin area.
-	 *
-	 * @since    1.0.0
-	 */
-	public function enqueue_scripts() {
-
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Session_Rewind_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Session_Rewind_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
-		wp_enqueue_script( $this->plugin_name, plugin_dir_url( __FILE__ ) . 'js/session-rewind-admin.js', array( 'jquery' ), $this->version, false );
-
-	}
-
 	public function addPluginAdminMenu() {
-		add_menu_page( $this->plugin_name, 
-									 'Session Rewind',
-									 'administrator',
-									 $this->plugin_name,
-									 array( $this, 'displayPluginAdminDashboard' ),
-									 'dashicons-controls-back', 26);
-		
-		add_submenu_page( $this->plugin_name,
-											'Session Rewind Settings',
-											'Settings',
-											'administrator',
-											$this->plugin_name.'-settings',
-											array( $this, 'displayPluginAdminSettings' ));
+		add_options_page(
+			'Session Rewind',
+			'Session Rewind',
+			'administrator',
+			'session-rewind-options',
+			[$this, 'displayPluginAdminSettings']
+		);
 	}
 
-	public function displayPluginAdminDashboard() {
-		require_once 'partials/'.$this->plugin_name.'-admin-display.php';
-	}
 
 	public function displayPluginAdminSettings() {
 		// set this var to be used in the settings-display view
@@ -153,17 +98,18 @@ class Session_Rewind_Admin {
 		 * First, we add_settings_section. This is necessary since all future settings must belong to one.
 		 * Second, add_settings_field
 		 * Third, register_setting
-		 */     
+		 */
+
 		add_settings_section(
-		// ID used to identify this section and with which to register options
-		'session_rewind_general_section', 
-		// Title to be displayed on the administration page
-		'Session Rewind',  
-		// Callback used to render the description of the section
-		array( $this, 'session_rewind_display_general_account' ),    
-		// Page on which to add this section of options
-		'session_rewind_general_settings'                   
+			'session_rewind_general_section',
+			// Title to be displayed on the administration page
+			'Configuration options',
+			// Callback used to render the description of the section
+			array( $this, 'session_rewind_display_general_account' ),
+			// Page on which to add this section of options
+			'session_rewind_general_settings'
 		);
+
 		unset($args);
 		$args = array (
 			'type'      => 'input',
@@ -187,12 +133,12 @@ class Session_Rewind_Admin {
 
 		register_setting(
 			'session_rewind_general_settings',
-			'session_rewind_example_setting'
+			'session_rewind_api_key'
 		);
 	}
 
 	public function session_rewind_display_general_account() {
-	  echo '<p>These settings apply to all Session Rewind functionality.</p>';
+	  echo '<!--<p>These settings apply to all Session Rewind functionality.</p>-->';
 	}
 
 	public function session_rewind_render_settings_field($args) {
@@ -208,9 +154,9 @@ class Session_Rewind_Admin {
 		'post_id' =>
 		*/     
 		if($args['wp_data'] == 'option'){
-			$wp_data_value = get_option($args['name']);
+			$wp_data_value = get_option($args['id']);
 		} elseif($args['wp_data'] == 'post_meta'){
-			$wp_data_value = get_post_meta($args['post_id'], $args['name'], true );
+			$wp_data_value = get_post_meta($args['post_id'], $args['id'], true );
 		}
 
 		switch ($args['type']) {
@@ -225,15 +171,15 @@ class Session_Rewind_Admin {
 							$max = (isset($args['max'])) ? 'max="'.$args['max'].'"' : '';
 							if(isset($args['disabled'])){
 									// hide the actual input bc if it was just a disabled input the informaiton saved in the database would be wrong - bc it would pass empty values and wipe the actual information
-									echo $prependStart.'<input type="'.$args['subtype'].'" id="'.$args['id'].'_disabled" '.$step.' '.$max.' '.$min.' name="'.$args['name'].'_disabled" size="40" disabled value="' . esc_attr($value) . '" /><input type="hidden" id="'.$args['id'].'" '.$step.' '.$max.' '.$min.' name="'.$args['name'].'" size="40" value="' . esc_attr($value) . '" />'.$prependEnd;
+									echo $prependStart.'<input type="'.$args['subtype'].'" id="'.$args['id'].'_disabled" '.$step.' '.$max.' '.$min.' name="'.$args['id'].'_disabled" size="50" disabled value="' . esc_attr($value) . '" /><input type="hidden" id="'.$args['id'].'" '.$step.' '.$max.' '.$min.' name="'.$args['id'].'" size="40" value="' . esc_attr($value) . '" />'.$prependEnd;
 							} else {
-									echo $prependStart.'<input type="'.$args['subtype'].'" id="'.$args['id'].'" "'.$args['required'].'" '.$step.' '.$max.' '.$min.' name="'.$args['name'].'" size="40" value="' . esc_attr($value) . '" />'.$prependEnd;
+									echo $prependStart.'<input type="'.$args['subtype'].'" id="'.$args['id'].'" required="'.$args['required'].'" '.$step.' '.$max.' '.$min.' name="'.$args['id'].'" size="50" value="' . esc_attr($value) . '" />'.$prependEnd;
 							}
 							/*<input required="required" '.$disabled.' type="number" step="any" id="'.$this->plugin_name.'_cost2" name="'.$this->plugin_name.'_cost2" value="' . esc_attr( $cost ) . '" size="25" /><input type="hidden" id="'.$this->plugin_name.'_cost" step="any" name="'.$this->plugin_name.'_cost" value="' . esc_attr( $cost ) . '" />*/
 
 					} else {
 							$checked = ($value) ? 'checked' : '';
-							echo '<input type="'.$args['subtype'].'" id="'.$args['id'].'" "'.$args['required'].'" name="'.$args['name'].'" size="40" value="1" '.$checked.' />';
+							echo '<input type="'.$args['subtype'].'" id="'.$args['id'].'" "'.$args['required'].'" name="'.$args['id'].'" size="40" value="1" '.$checked.' />';
 					}
 					break;
 			default:
