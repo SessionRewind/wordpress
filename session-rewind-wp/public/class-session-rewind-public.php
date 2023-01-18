@@ -61,28 +61,13 @@ class Session_Rewind_Public {
 	 * @since    1.0.0
 	 */
 	public function enqueue_scripts() {
-
-		/**
-		 * This function is provided for demonstration purposes only.
-		 *
-		 * An instance of this class should be passed to the run() function
-		 * defined in Session_Rewind_Loader as all of the hooks are defined
-		 * in that particular class.
-		 *
-		 * The Session_Rewind_Loader will then create the relationship
-		 * between the defined hooks and the functions defined in this
-		 * class.
-		 */
-
 		$data = json_encode(array(
 			'apiKey' => get_option('session_rewind_api_key'),
-			'startRecording' => true
+			'startRecording' => !!get_option('session_rewind_start_recording'),
+			'createNewSession' => !!get_option('session_rewind_create_new_session')
 		));
-
-
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url(__FILE__) . 'js/session-rewind-public.js', array( 'jquery' ), $this->version, true );
 		wp_add_inline_script($this->plugin_name, 'var sessionRewindOptions = ' . $data . ';', 'before');
-
 	}
 
 }

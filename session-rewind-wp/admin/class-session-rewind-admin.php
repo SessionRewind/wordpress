@@ -94,46 +94,79 @@ class Session_Rewind_Admin {
 	}
 
 	public function registerAndBuildFields() {
-		/**
-		 * First, we add_settings_section. This is necessary since all future settings must belong to one.
-		 * Second, add_settings_field
-		 * Third, register_setting
-		 */
-
 		add_settings_section(
 			'session_rewind_general_section',
-			// Title to be displayed on the administration page
 			'Configuration options',
-			// Callback used to render the description of the section
 			array( $this, 'session_rewind_display_general_account' ),
-			// Page on which to add this section of options
 			'session_rewind_general_settings'
 		);
 
-		unset($args);
-		$args = array (
-			'type'      => 'input',
-			'subtype'   => 'text',
-			'id'    => 'session_rewind_api_key',
-			'name'      => 'Session Rewind API Key',
-			'required' => 'true',
-			'get_options_list' => '',
-			'value_type'=>'normal',
-			'wp_data' => 'option'
+		register_setting(
+			'session_rewind_general_settings',
+			'session_rewind_api_key'
 		);
-
 		add_settings_field(
 			'session_rewind_api_key',
 			'Session Rewind API Key',
 			array( $this, 'session_rewind_render_settings_field' ),
 			'session_rewind_general_settings',
 			'session_rewind_general_section',
-			$args
+			array (
+				'type'      => 'input',
+				'subtype'   => 'text',
+				'id'    => 'session_rewind_api_key',
+				'name'      => 'Session Rewind API Key',
+				'required' => true,
+				'get_options_list' => '',
+				'value_type'=>'normal',
+				'wp_data' => 'option'
+			)
 		);
 
 		register_setting(
 			'session_rewind_general_settings',
-			'session_rewind_api_key'
+			'session_rewind_start_recording'
+		);
+		add_settings_field(
+			'session_rewind_start_recording',
+			'Start recording',
+			array( $this, 'session_rewind_render_settings_field' ),
+			'session_rewind_general_settings',
+			'session_rewind_general_section',
+			array (
+				'type'      => 'input',
+				'subtype'   => 'checkbox',
+				'id'    => 'session_rewind_start_recording',
+				'name'      => 'Start recording',
+				'required' => false,
+				'get_options_list' => '',
+				'value_type'=>'normal',
+				'wp_data' => 'option',
+				'label' => 'If not checked recording will need to be started later via window.sessionRewind.startSession()'
+			)
+		);
+
+		register_setting(
+			'session_rewind_general_settings',
+		'session_rewind_create_new_session'
+		);
+		add_settings_field(
+			'session_rewind_create_new_session',
+			'Create a new session',
+			array( $this, 'session_rewind_render_settings_field' ),
+			'session_rewind_general_settings',
+			'session_rewind_general_section',
+			array (
+				'type'      => 'input',
+				'subtype'   => 'checkbox',
+				'id'    => 'session_rewind_create_new_session',
+				'name'      => 'Create a new session',
+				'required' => false,
+				'get_options_list' => '',
+				'value_type'=>'normal',
+				'wp_data' => 'option',
+				'label' => 'Create a new session upon page load, even if one has already started.'
+			)
 		);
 	}
 
@@ -141,45 +174,38 @@ class Session_Rewind_Admin {
 	  echo '<!--<p>These settings apply to all Session Rewind functionality.</p>-->';
 	}
 
+
+
 	public function session_rewind_render_settings_field($args) {
-		/* EXAMPLE INPUT
-							'type'      => 'input',
-							'subtype'   => '',
-							'id'    => $this->plugin_name.'_example_setting',
-							'name'      => $this->plugin_name.'_example_setting',
-							'required' => 'required="required"',
-							'get_option_list' => "",
-								'value_type' = serialized OR normal,
-		'wp_data'=>(option or post_meta),
-		'post_id' =>
-		*/     
 		if($args['wp_data'] == 'option'){
 			$wp_data_value = get_option($args['id']);
 		} elseif($args['wp_data'] == 'post_meta'){
 			$wp_data_value = get_post_meta($args['post_id'], $args['id'], true );
 		}
-
 		switch ($args['type']) {
-
 			case 'input':
 					$value = ($args['value_type'] == 'serialized') ? serialize($wp_data_value) : $wp_data_value;
+					$required = ($args['required'] === true) ? 'required' : '';
 					if($args['subtype'] != 'checkbox'){
 							$prependStart = (isset($args['prepend_value'])) ? '<div class="input-prepend"> <span class="add-on">'.$args['prepend_value'].'</span>' : '';
 							$prependEnd = (isset($args['prepend_value'])) ? '</div>' : '';
 							$step = (isset($args['step'])) ? 'step="'.$args['step'].'"' : '';
 							$min = (isset($args['min'])) ? 'min="'.$args['min'].'"' : '';
 							$max = (isset($args['max'])) ? 'max="'.$args['max'].'"' : '';
+
 							if(isset($args['disabled'])){
 									// hide the actual input bc if it was just a disabled input the informaiton saved in the database would be wrong - bc it would pass empty values and wipe the actual information
 									echo $prependStart.'<input type="'.$args['subtype'].'" id="'.$args['id'].'_disabled" '.$step.' '.$max.' '.$min.' name="'.$args['id'].'_disabled" size="50" disabled value="' . esc_attr($value) . '" /><input type="hidden" id="'.$args['id'].'" '.$step.' '.$max.' '.$min.' name="'.$args['id'].'" size="40" value="' . esc_attr($value) . '" />'.$prependEnd;
 							} else {
-									echo $prependStart.'<input type="'.$args['subtype'].'" id="'.$args['id'].'" required="'.$args['required'].'" '.$step.' '.$max.' '.$min.' name="'.$args['id'].'" size="50" value="' . esc_attr($value) . '" />'.$prependEnd;
+									echo $prependStart.'<input type="'.$args['subtype'].'" id="'.$args['id'].'" '.$required.' '.$step.' '.$max.' '.$min.' name="'.$args['id'].'" size="50" value="' . esc_attr($value) . '" />'.$prependEnd;
 							}
-							/*<input required="required" '.$disabled.' type="number" step="any" id="'.$this->plugin_name.'_cost2" name="'.$this->plugin_name.'_cost2" value="' . esc_attr( $cost ) . '" size="25" /><input type="hidden" id="'.$this->plugin_name.'_cost" step="any" name="'.$this->plugin_name.'_cost" value="' . esc_attr( $cost ) . '" />*/
-
 					} else {
 							$checked = ($value) ? 'checked' : '';
-							echo '<input type="'.$args['subtype'].'" id="'.$args['id'].'" "'.$args['required'].'" name="'.$args['id'].'" size="40" value="1" '.$checked.' />';
+							$markup = '<input type="'.$args['subtype'].'" id="'.$args['id'].'" '.$required.' name="'.$args['id'].'" value="1" '.$checked.' />';
+							if (array_key_exists('label', $args)) {
+								$markup .= '<label for="' .$args['id'].'" >'.$args['label'].'</label>';
+							}
+							echo $markup;
 					}
 					break;
 			default:

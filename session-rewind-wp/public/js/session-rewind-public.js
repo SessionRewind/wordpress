@@ -9,5 +9,5 @@ if (sessionRewindOptions && sessionRewindOptions.apiKey) {
 		g.insertBefore(f, g.firstChild);
 	}(sessionRewindOptions);
 } else {
-	console.warn('Session Rewind is not configured!')
+	console.warn('Session Rewind WP plugin is not configured!')
 }

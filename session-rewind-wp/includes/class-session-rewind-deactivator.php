@@ -1,19 +1,6 @@
 <?php
-
-/**
- * Fired during plugin deactivation
- *
- * @link       https://sessionrewind.com
- * @since      1.0.0
- *
- * @package    Session_Rewind
- * @subpackage Session_Rewind/includes
- */
-
 /**
  * Fired during plugin deactivation.
- *
- * This class defines all code necessary to run during the plugin's deactivation.
  *
  * @since      1.0.0
  * @package    Session_Rewind
@@ -22,13 +9,6 @@
  */
 class Session_Rewind_Deactivator {
 
-	/**
-	 * Short Description. (use period)
-	 *
-	 * Long Description.
-	 *
-	 * @since    1.0.0
-	 */
 	public static function deactivate() {
 
 	}

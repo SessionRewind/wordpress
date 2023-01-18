@@ -30,21 +30,8 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-/**
- * Currently plugin version.
- * Start at version 1.0.0 and use SemVer - https://semver.org
- * Rename this for your plugin and update it as you release new versions.
- */
 define( 'SESSION_REWIND_VERSION', '1.0.0' );
 
-// function load_session_rewind() {
-//   wp_enqueue_script(
-//     'session-rewind',
-//     plugins_url('/js/session-rewind.js', __FILE__)
-//   );
-// }
-
-// add_action('wp_enqueue_scripts', 'load_session_rewind');
 
 /**
  * The code that runs during plugin activation.
