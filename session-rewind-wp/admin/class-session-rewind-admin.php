@@ -127,47 +127,47 @@ class Session_Rewind_Admin {
 			'session_rewind_general_settings',
 			'session_rewind_start_recording'
 		);
-		add_settings_field(
-			'session_rewind_start_recording',
-			'Start recording',
-			array( $this, 'session_rewind_render_settings_field' ),
-			'session_rewind_general_settings',
-			'session_rewind_general_section',
-			array (
-				'type'      => 'input',
-				'subtype'   => 'checkbox',
-				'id'    => 'session_rewind_start_recording',
-				'name'      => 'Start recording',
-				'required' => false,
-				'get_options_list' => '',
-				'value_type'=>'normal',
-				'wp_data' => 'option',
-				'label' => 'If not checked recording will need to be started later via window.sessionRewind.startSession()'
-			)
-		);
+//		add_settings_field(
+//			'session_rewind_start_recording',
+//			'Start recording',
+//			array( $this, 'session_rewind_render_settings_field' ),
+//			'session_rewind_general_settings',
+//			'session_rewind_general_section',
+//			array (
+//				'type'      => 'input',
+//				'subtype'   => 'checkbox',
+//				'id'    => 'session_rewind_start_recording',
+//				'name'      => 'Start recording',
+//				'required' => false,
+//				'get_options_list' => '',
+//				'value_type'=>'normal',
+//				'wp_data' => 'option',
+//				'label' => 'If not checked recording will need to be started later via window.sessionRewind.startSession()'
+//			)
+//		);
 
 		register_setting(
 			'session_rewind_general_settings',
 		'session_rewind_create_new_session'
 		);
-		add_settings_field(
-			'session_rewind_create_new_session',
-			'Create a new session',
-			array( $this, 'session_rewind_render_settings_field' ),
-			'session_rewind_general_settings',
-			'session_rewind_general_section',
-			array (
-				'type'      => 'input',
-				'subtype'   => 'checkbox',
-				'id'    => 'session_rewind_create_new_session',
-				'name'      => 'Create a new session',
-				'required' => false,
-				'get_options_list' => '',
-				'value_type'=>'normal',
-				'wp_data' => 'option',
-				'label' => 'Create a new session upon page load, even if one has already started.'
-			)
-		);
+//		add_settings_field(
+//			'session_rewind_create_new_session',
+//			'Create a new session',
+//			array( $this, 'session_rewind_render_settings_field' ),
+//			'session_rewind_general_settings',
+//			'session_rewind_general_section',
+//			array (
+//				'type'      => 'input',
+//				'subtype'   => 'checkbox',
+//				'id'    => 'session_rewind_create_new_session',
+//				'name'      => 'Create a new session',
+//				'required' => false,
+//				'get_options_list' => '',
+//				'value_type'=>'normal',
+//				'wp_data' => 'option',
+//				'label' => 'Create a new session upon page load, even if one has already started.'
+//			)
+//		);
 	}
 
 	public function session_rewind_display_general_account() {

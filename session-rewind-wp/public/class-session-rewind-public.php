@@ -63,8 +63,9 @@ class Session_Rewind_Public {
 	public function enqueue_scripts() {
 		$data = json_encode(array(
 			'apiKey' => get_option('session_rewind_api_key'),
-			'startRecording' => !!get_option('session_rewind_start_recording'),
-			'createNewSession' => !!get_option('session_rewind_create_new_session')
+			'startRecording' => true,
+//			'startRecording' => !!get_option('session_rewind_start_recording'),
+//			'createNewSession' => !!get_option('session_rewind_create_new_session')
 		));
 		wp_enqueue_script( $this->plugin_name, plugin_dir_url(__FILE__) . 'js/session-rewind-public.js', array( 'jquery' ), $this->version, true );
 		wp_add_inline_script($this->plugin_name, 'var sessionRewindOptions = ' . $data . ';', 'before');
