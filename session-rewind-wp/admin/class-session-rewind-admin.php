@@ -67,11 +67,11 @@ class Session_Rewind_Admin {
 
 
 	public function displayPluginAdminSettings() {
-		// set this var to be used in the settings-display view
-		$active_tab = isset( $_GET[ 'tab' ] ) ? $_GET[ 'tab' ] : 'general';
 		if(isset($_GET['error_message'])){
-				add_action('admin_notices', array($this,'pluginNameSettingsMessages'));
-				do_action( 'admin_notices', $_GET['error_message'] );
+			$message = sanitize_text_field($_GET['error_message']);
+			$message = esc_html($message);
+			add_action('admin_notices', array($this,'pluginNameSettingsMessages'));
+			do_action( 'admin_notices', $message );
 		}
 		require_once 'partials/'.$this->plugin_name.'-admin-settings-display.php';
 	}
@@ -184,33 +184,62 @@ class Session_Rewind_Admin {
 		}
 		switch ($args['type']) {
 			case 'input':
-					$value = ($args['value_type'] == 'serialized') ? serialize($wp_data_value) : $wp_data_value;
-					$required = ($args['required'] === true) ? 'required' : '';
-					if($args['subtype'] != 'checkbox'){
-							$prependStart = (isset($args['prepend_value'])) ? '<div class="input-prepend"> <span class="add-on">'.$args['prepend_value'].'</span>' : '';
-							$prependEnd = (isset($args['prepend_value'])) ? '</div>' : '';
-							$step = (isset($args['step'])) ? 'step="'.$args['step'].'"' : '';
-							$min = (isset($args['min'])) ? 'min="'.$args['min'].'"' : '';
-							$max = (isset($args['max'])) ? 'max="'.$args['max'].'"' : '';
+				$value = ($args['value_type'] == 'serialized') ? serialize($wp_data_value) : $wp_data_value;
+				$required = ($args['required'] === true) ? 'required' : '';
+				if($args['subtype'] != 'checkbox'){
+					$prependStart = (isset($args['prepend_value'])) ? '<div class="input-prepend"> <span class="add-on">'.esc_html($args['prepend_value']).'</span>' : '';
+					$prependEnd = (isset($args['prepend_value'])) ? '</div>' : '';
+					$step = (isset($args['step'])) ? 'step="'.esc_attr($args['step']).'"' : '';
+					$min = (isset($args['min'])) ? 'min="'.esc_attr($args['min']).'"' : '';
+					$max = (isset($args['max'])) ? 'max="'.esc_attr($args['max']).'"' : '';
 
-							if(isset($args['disabled'])){
-									// hide the actual input bc if it was just a disabled input the informaiton saved in the database would be wrong - bc it would pass empty values and wipe the actual information
-									echo $prependStart.'<input type="'.$args['subtype'].'" id="'.$args['id'].'_disabled" '.$step.' '.$max.' '.$min.' name="'.$args['id'].'_disabled" size="50" disabled value="' . esc_attr($value) . '" /><input type="hidden" id="'.$args['id'].'" '.$step.' '.$max.' '.$min.' name="'.$args['id'].'" size="40" value="' . esc_attr($value) . '" />'.$prependEnd;
-							} else {
-									echo $prependStart.'<input type="'.$args['subtype'].'" id="'.$args['id'].'" '.$required.' '.$step.' '.$max.' '.$min.' name="'.$args['id'].'" size="50" value="' . esc_attr($value) . '" />'.$prependEnd;
-							}
+					if(isset($args['disabled'])){
+						// hide the actual input bc if it was just a disabled input the informaiton saved in the database would be wrong - bc it would pass empty values and wipe the actual information
+						echo $prependStart
+						     . '<input type="'
+							 . esc_attr($args['subtype'])
+							 . '" id="'
+							 . esc_attr($args['id'])
+							 . '_disabled" '
+							 . $step . ' ' . $max . ' ' . $min
+							 . ' name="'
+							 . esc_attr($args['id'])
+							 . '_disabled" size="50" disabled value="'
+							 . esc_attr($value)
+							 . '" /><input type="hidden" id="'
+							 . esc_attr($args['id'])
+							 . '" '
+							 . $step . ' ' . $max . ' ' . $min
+							 . ' name="'
+							 . esc_attr($args['id'])
+							 . '" size="40" value="'
+							 . esc_attr($value)
+							 . '" />'
+							 . $prependEnd;
 					} else {
-							$checked = ($value) ? 'checked' : '';
-							$markup = '<input type="'.$args['subtype'].'" id="'.$args['id'].'" '.$required.' name="'.$args['id'].'" value="1" '.$checked.' />';
-							if (array_key_exists('label', $args)) {
-								$markup .= '<label for="' .$args['id'].'" >'.$args['label'].'</label>';
-							}
-							echo $markup;
+						echo $prependStart
+						     . '<input type="'
+						     . esc_attr($args['subtype'])
+						     . '" id="'
+						     . esc_attr($args['id'])
+						     . '"' . $required . ' '
+						     . $step . ' ' . $max . ' ' . $min
+						     . ' name="'
+						     . esc_attr($args['id'])
+						     . '" size="50" value="'
+						     . esc_attr($value)
+						     . '" />'
+						     . $prependEnd;
 					}
-					break;
-			default:
-					# code...
-					break;
+				} else {
+					$checked = ($value) ? 'checked' : '';
+					$markup = '<input type="checkbox" id="'.esc_attr($args['id']).'" '.$required.' name="'.esc_attr($args['id']).'" value="1" '.$checked.' />';
+					if (array_key_exists('label', $args)) {
+						$markup .= '<label for="' .esc_attr($args['id']).'" >'.esc_html($args['label']).'</label>';
+					}
+					echo $markup;
+				}
+				break;
 		}
 	}
 }
