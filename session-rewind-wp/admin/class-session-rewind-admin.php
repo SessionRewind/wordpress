@@ -186,6 +186,30 @@ class Session_Rewind_Admin {
 			case 'input':
 				$value = ($args['value_type'] == 'serialized') ? serialize($wp_data_value) : $wp_data_value;
 				$required = ($args['required'] === true) ? 'required' : '';
+
+				$allowedHtml = [
+					'input' => [
+						'step' => [],
+						'min' => [],
+						'max' => [],
+						'type' => [],
+						'id' => [],
+						'name' => [],
+						'size' => [],
+						'disabled' => [],
+						'value' => []
+					],
+					'div' => [
+						'class' => [],
+					],
+					'span' => [
+						'class' => [],
+					],
+					'label' => [
+						'for' => []
+					]
+				];
+
 				if($args['subtype'] != 'checkbox'){
 					$prependStart = (isset($args['prepend_value'])) ? '<div class="input-prepend"> <span class="add-on">'.esc_html($args['prepend_value']).'</span>' : '';
 					$prependEnd = (isset($args['prepend_value'])) ? '</div>' : '';
@@ -195,7 +219,7 @@ class Session_Rewind_Admin {
 
 					if(isset($args['disabled'])){
 						// hide the actual input bc if it was just a disabled input the informaiton saved in the database would be wrong - bc it would pass empty values and wipe the actual information
-						echo $prependStart
+						echo wp_kses($prependStart
 						     . '<input type="'
 							 . esc_attr($args['subtype'])
 							 . '" id="'
@@ -215,9 +239,9 @@ class Session_Rewind_Admin {
 							 . '" size="40" value="'
 							 . esc_attr($value)
 							 . '" />'
-							 . $prependEnd;
+							 . $prependEnd, $allowedHtml);
 					} else {
-						echo $prependStart
+						echo wp_kses($prependStart
 						     . '<input type="'
 						     . esc_attr($args['subtype'])
 						     . '" id="'
@@ -229,7 +253,7 @@ class Session_Rewind_Admin {
 						     . '" size="50" value="'
 						     . esc_attr($value)
 						     . '" />'
-						     . $prependEnd;
+						     . $prependEnd, $allowedHtml);
 					}
 				} else {
 					$checked = ($value) ? 'checked' : '';
@@ -237,7 +261,7 @@ class Session_Rewind_Admin {
 					if (array_key_exists('label', $args)) {
 						$markup .= '<label for="' .esc_attr($args['id']).'" >'.esc_html($args['label']).'</label>';
 					}
-					echo $markup;
+					echo wp_kses($markup, $allowedHtml);
 				}
 				break;
 		}
