@@ -105,22 +105,31 @@ class Session_Rewind_Admin {
 			'session_rewind_general_settings',
 			'session_rewind_api_key'
 		);
+
+		$args = array (
+			'type'      => 'input',
+			'subtype'   => 'text',
+			'id'    => 'session_rewind_api_key',
+			'name'      => 'Session Rewind API Key',
+			'required' => true,
+			'get_options_list' => '',
+			'value_type'=>'normal',
+			'wp_data' => 'option'
+		);
+
+		if (defined('SESSIONREWIND_API_KEY')) {
+			$args['disabled'] = true;
+			$args['force_value'] = SESSIONREWIND_API_KEY;
+			$args['description'] = 'A Session Rewind API key was found in your WordPress configuration file. To manage your API key here, first remove the key from the configuration file.';
+		}
+
 		add_settings_field(
 			'session_rewind_api_key',
 			'Session Rewind API Key',
 			array( $this, 'session_rewind_render_settings_field' ),
 			'session_rewind_general_settings',
 			'session_rewind_general_section',
-			array (
-				'type'      => 'input',
-				'subtype'   => 'text',
-				'id'    => 'session_rewind_api_key',
-				'name'      => 'Session Rewind API Key',
-				'required' => true,
-				'get_options_list' => '',
-				'value_type'=>'normal',
-				'wp_data' => 'option'
-			)
+			$args
 		);
 
 		register_setting(
@@ -182,6 +191,9 @@ class Session_Rewind_Admin {
 		} elseif($args['wp_data'] == 'post_meta'){
 			$wp_data_value = get_post_meta($args['post_id'], $args['id'], true );
 		}
+		if(isset($args['force_value'])) {
+			$wp_data_value = $args['force_value'];
+		}
 		switch ($args['type']) {
 			case 'input':
 				$value = ($args['value_type'] == 'serialized') ? serialize($wp_data_value) : $wp_data_value;
@@ -207,6 +219,9 @@ class Session_Rewind_Admin {
 					],
 					'label' => [
 						'for' => []
+					],
+					'p' => [
+						'class' => []
 					]
 				];
 
@@ -216,6 +231,7 @@ class Session_Rewind_Admin {
 					$step = (isset($args['step'])) ? 'step="'.esc_attr($args['step']).'"' : '';
 					$min = (isset($args['min'])) ? 'min="'.esc_attr($args['min']).'"' : '';
 					$max = (isset($args['max'])) ? 'max="'.esc_attr($args['max']).'"' : '';
+					$description = (isset($args['description'])) ? '<p class="description">' . $args['description'] . '</p>' : '';
 
 					if(isset($args['disabled'])){
 						// hide the actual input bc if it was just a disabled input the informaiton saved in the database would be wrong - bc it would pass empty values and wipe the actual information
@@ -239,7 +255,8 @@ class Session_Rewind_Admin {
 							 . '" size="40" value="'
 							 . esc_attr($value)
 							 . '" />'
-							 . $prependEnd, $allowedHtml);
+							 . $prependEnd
+							 . $description, $allowedHtml);
 					} else {
 						echo wp_kses($prependStart
 						     . '<input type="'
@@ -253,7 +270,8 @@ class Session_Rewind_Admin {
 						     . '" size="50" value="'
 						     . esc_attr($value)
 						     . '" />'
-						     . $prependEnd, $allowedHtml);
+						     . $prependEnd
+				             . $description, $allowedHtml);
 					}
 				} else {
 					$checked = ($value) ? 'checked' : '';

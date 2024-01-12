@@ -62,7 +62,7 @@ class Session_Rewind_Public {
 	 */
 	public function enqueue_scripts() {
 		$data = json_encode(array(
-			'apiKey' => get_option('session_rewind_api_key'),
+			'apiKey' => defined('SESSIONREWIND_API_KEY') ? SESSIONREWIND_API_KEY : get_option('session_rewind_api_key'),
 			'startRecording' => true,
 //			'startRecording' => !!get_option('session_rewind_start_recording'),
 //			'createNewSession' => !!get_option('session_rewind_create_new_session')
