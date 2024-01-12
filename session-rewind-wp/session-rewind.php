@@ -16,7 +16,7 @@
  * Plugin Name:       Session Rewind
  * Plugin URI:        https://sessionrewind.com
  * Description:       Accurately record every session and issue.
- * Version:           1.0.0
+ * Version:           1.1.0
  * Author:            Session Rewind
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
