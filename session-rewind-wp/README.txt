@@ -4,7 +4,7 @@ Donate link: https://sessionrewind.com
 Tags: session recording, heatmaps, recordings, insights
 Requires at least: 2.7
 Tested up to: 6.4.2
-Stable tag: 1.1.0
+Stable tag: 1.1.1
 Requires PHP: 5.2.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -36,7 +36,7 @@ Alternatively, you can install the plugin manually:
 1. Activate the plugin through the 'Plugins' menu in WordPress
 1. Go to "Settings" → "Session Rewind" section and set your Session Rewind API Key
 
-== Adding your API key using wp-config ==
+*Adding your API key using wp-config*
 
 You can also configure the plugin by setting your Session Rewind API key in wp-config.php by adding the following:
 `define('SESSIONREWIND_API_KEY', 'xxxxxxxxx');`
